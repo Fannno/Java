@@ -1,0 +1,50 @@
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+
+public class MI3C_1204_HWK9_03 {
+    public static void main(String []args)throws IOException  {
+	String[] names = {"Peter", "Paul","Mary","Joe","Cathy","Samuel"};
+	double[] scores = {88.5, 47.9, 90.3, 77.5, 65.8, 92.3} ;
+	writeToBinaryFile("c:/Data/scores.bin", names, scores) ; 
+	readFromBinaryFile("/c:/Data/scores.bin");
+    }
+    public static void writeToBinaryFile(String fName, String[] ns, double[] ss) throws IOException {
+	FileOutputStream fos = new FileOutputStream(fName);
+	// DIY here, 透過fos依序將ns[i]、fs[i]內容寫入檔案(fName)
+	// 記得throws Exception
+        var dos = new DataOutputStream(fos);        
+        dos.writeInt(ns.length);//6
+        for (int i = 0; i < ns.length; i++) {
+            String n = ns[i];
+            String n_10 = String.format("%10s", n);
+            byte [] bs = n_10.getBytes(StandardCharsets.UTF_8);
+            double s = ss[i];
+            dos.write(bs);
+            String s_10 = String.format("%8s", s);
+            byte [] bss = s_10.getBytes(StandardCharsets.UTF_8);
+            dos.write(bss);
+            
+        }        
+    }
+    public static void readFromBinaryFile(String fName) throws IOException {
+        FileInputStream fis = new FileInputStream(fName);
+	// DIY, 透過fis讀取並印出檔案(fName)內容，格式 (name,score)
+        var dis = new DataInputStream(fis);
+        int a = dis.readInt();
+        for (int i = 0; i < a; i++) {
+            byte [] n = new byte[10] ;
+            dis.readFully(n);
+            byte [] s = new byte[8] ;
+            dis.readFully(s); 
+            String name = new String(n,StandardCharsets.UTF_8).trim();
+            String score = new String(s,StandardCharsets.UTF_8).trim();
+            double ss = Double.parseDouble(score);
+            System.out.println("("+name+","+score+")");
+        }
+    }
+}
+/* [程式輸出]
+(Peter, 88.5)
+(Paul, 47.9)
+... 
+*/
